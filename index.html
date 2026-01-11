@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeAudit AI | Beat ATS Filters</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* colors*/
+        :root {
+            --space-bg: #0a0a0f;
+            --dark-bg: #12121f;
+            --card-bg: #1a1a2e;
+            --accent-bg: #22223a;
+            --primary: #6c63ff;
+            --primary-glow: #6c63ff80;
+            --secondary: #00d4aa;
+            --secondary-glow: #00d4aa80;
+            --accent: #ff6584;
+            --accent-glow: #ff658480;
+            --text: #e2e2ff;
+            --text-secondary: #a0a0c0;
+            --border: #2a2a3e;
+            --success: #2ee6a0;
+            --warning: #ffb347;
+            --danger: #ff6584;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --glow: 0 0 20px;
+            --gradient-primary: linear-gradient(135deg, #6c63ff, #3a34b0);
+            --gradient-secondary: linear-gradient(135deg, #00d4aa, #008c7a);
+            --gradient-accent: linear-gradient(135deg, #ff6584, #d43a5f);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--space-bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, var(--primary-glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, var(--secondary-glow) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, var(--accent-glow) 0%, transparent 50%);
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* typog */
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .highlight {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            margin-bottom: 4rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -40px;
+            right: -40px;
+            height: 60px;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    var(--primary-glow) 50%,
+                    transparent 100%);
+            filter: blur(20px);
+            z-index: -1;
+        }
+
+        /* nav */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(16, 16, 26, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+            padding: 1.2rem 0;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 2rem;
+            filter: drop-shadow(0 0 10px var(--primary-glow));
+        }
+
+        .logo-highlight {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.8rem 0;
+            position: relative;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* hs*/
+        .hero {
+            padding: 200px 0 150px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            filter: blur(100px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 2rem;
+            max-width: 900px;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.05;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 4rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 5rem;
+            margin-top: 6rem;
+            position: relative;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    var(--border) 50%,
+                    transparent 100%);
+        }
+
+        .stat {
+            text-align: center;
+            position: relative;
+        }
+
+        .stat h3 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px var(--primary-glow));
+        }
+
+        .stat p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* upload*/
+        .upload-section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .upload-card {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 4rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow);
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .upload-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .upload-header i {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 20px var(--primary-glow));
+        }
+
+        .upload-header h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .upload-header p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .role-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-bottom: 3rem;
+        }
+
+        .role-selector i {
+            color: var(--secondary);
+            font-size: 1.5rem;
+        }
+
+        .role-dropdown {
+            padding: 1rem 2rem;
+            background: rgba(34, 34, 58, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: var(--text);
+            font-size: 1.1rem;
+            cursor: pointer;
+            min-width: 320px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236c63ff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.5rem center;
+            background-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .role-dropdown:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .drop-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 4rem 2rem;
+            text-align: center;
+            transition: var(--transition);
+            margin-bottom: 2rem;
+            background: rgba(34, 34, 58, 0.5);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(108, 99, 255, 0.1) 50%,
+                    transparent 100%);
+            transition: var(--transition);
+        }
+
+        .drop-zone:hover::before {
+            left: 100%;
+        }
+
+        .drop-zone.active {
+            border-color: var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+        }
+
+        .drop-zone i {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 15px var(--primary-glow));
+        }
+
+        .file-types {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0.5rem 0 2rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .browse-btn {
+            display: inline-block;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px var(--primary-glow);
+            border: none;
+            font-size: 1.1rem;
+        }
+
+        .browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px var(--primary-glow);
+        }
+
+        .file-preview {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+
+        .file-preview.show {
+            display: block;
+            animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .demo-option {
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--text-secondary);
+        }
+
+        .demo-option button {
+            background: none;
+            border: none;
+            color: var(--secondary);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+
+        .demo-option button:hover {
+            color: var(--text);
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: var(--transition);
+            box-shadow: 0 4px 25px var(--primary-glow);
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analyze-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(30deg);
+            transition: var(--transition);
+        }
+
+        .analyze-btn:hover::after {
+            left: 120%;
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 35px var(--primary-glow);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            margin-top: 3rem;
+            display: none;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid transparent;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            animation: spin 1s linear infinite;
+            position: relative;
+        }
+
+        .spinner::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 3px solid transparent;
+            border-top-color: var(--secondary);
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .results-section {
+            padding: 100px 0;
+            position: relative;
+            display: none;
+        }
+
+        .results-card {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 4rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-secondary);
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .results-header h2 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .timestamp {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .score-display {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 4rem;
+            margin: 4rem 0;
+            align-items: center;
+        }
+
+        .score-circle {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .score-circle svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .score-circle circle {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+        }
+
+        .score-circle .bg-circle {
+            stroke: rgba(255, 255, 255, 0.1);
+        }
+
+        .score-circle .progress-circle {
+            stroke: url(#gradient);
+            stroke-dasharray: 628;
+            stroke-dashoffset: 628;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .score-circle-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 4.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .score-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .score-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .score-item {
+            background: rgba(34, 34, 58, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .score-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .score-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: var(--gradient-primary);
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+            position: relative;
+        }
+
+        .score-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.3) 50%,
+                    transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        .score-fill.target {
+            background: var(--gradient-secondary);
+            width: 85%;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .result-box {
+            background: rgba(34, 34, 58, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-md);
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .result-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .missing-skills::before {
+            background: var(--gradient-accent);
+        }
+
+        .strengths::before {
+            background: var(--gradient-secondary);
+        }
+
+        .feedback::before {
+            background: var(--gradient-primary);
+        }
+
+        .result-box h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .result-box i {
+            font-size: 1.8rem;
+        }
+
+        .missing-skills i {
+            color: var(--danger);
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+        }
+
+        .strengths i {
+            color: var(--success);
+            filter: drop-shadow(0 0 10px var(--secondary-glow));
+        }
+
+        .feedback i {
+            color: var(--primary);
+            filter: drop-shadow(0 0 10px var(--primary-glow));
+        }
+
+        .result-box ul,
+        .result-box ol {
+            padding-left: 1.5rem;
+        }
+
+        .result-box li {
+            margin-bottom: 0.8rem;
+            padding-left: 0.5rem;
+            position: relative;
+        }
+
+        .result-box li::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .missing-skills li::before {
+            background: var(--danger);
+        }
+
+        .strengths li::before {
+            background: var(--success);
+        }
+
+        .feedback li::before {
+            background: var(--primary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            flex: 1;
+            padding: 1.2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: var(--transition);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 25px var(--primary-glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--primary);
+            box-shadow: 0 4px 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover,
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 35px var(--primary-glow);
+        }
+
+        /* Updated: Changed problem-section to about-section */
+        .about-section,
+        .how-section,
+        .features-section,
+        .advantages-section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .about-section::before,
+        .advantages-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    var(--border) 50%,
+                    transparent 100%);
+        }
+
+        /* Updated: Changed problem-grid to about-grid */
+        .about-grid,
+        .features-grid,
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        /* Updated: Changed problem-card to about-card */
+        .about-card,
+        .feature-card,
+        .advantage-card {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-card:hover,
+        .feature-card:hover,
+        .advantage-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .about-card::before,
+        .feature-card::before,
+        .advantage-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        /* Updated: Changed gradient to primary for about section */
+        .about-card::before {
+            background: var(--gradient-primary);
+        }
+
+        .feature-card::before {
+            background: var(--gradient-primary);
+        }
+
+        .advantage-card::before {
+            background: var(--gradient-secondary);
+        }
+
+        /* Updated: Changed problem-icon to about-icon */
+        .about-icon {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .about-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            z-index: -1;
+            background: var(--primary-glow);
+            filter: blur(20px);
+        }
+
+        .about-card h3,
+        .feature-card h3,
+        .advantage-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .how-section .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            margin-top: 6rem;
+            position: relative;
+        }
+
+        .how-section .steps::before {
+            content: '';
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            right: 100px;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    var(--primary) 0%,
+                    var(--secondary) 25%,
+                    var(--accent) 50%,
+                    var(--primary) 75%,
+                    var(--secondary) 100%);
+            background-size: 200% 100%;
+            animation: flow 3s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes flow {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(20px);
+            padding: 3rem 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto 2rem;
+            position: relative;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .step-number::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+        }
+
+        .step h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Updated: Changed future-section to advantages-section */
+        .advantages-grid {
+            perspective: 1000px;
+        }
+
+        .advantage-card {
+            transform-style: preserve-3d;
+            transform: rotateY(15deg);
+            transition: var(--transition);
+        }
+
+        .advantage-card:hover {
+            transform: rotateY(0deg) translateY(-10px);
+        }
+
+        .footer {
+            background: rgba(18, 18, 31, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 5rem 0 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    var(--primary) 50%,
+                    transparent 100%);
+        }
+
+        .footer-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .disclaimer {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-top: 2rem;
+            opacity: 0.7;
+        }
+
+        /* floatin */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /*hover*/
+        .interactive-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interactive-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .interactive-card:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        @media (max-width: 1200px) {
+            .section-title {
+                font-size: 3rem;
+            }
+
+            .hero h1 {
+                font-size: 3.8rem;
+            }
+
+            .score-display {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .score-circle {
+                width: 250px;
+                height: 250px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                padding: 0 30px;
+            }
+
+            .hero h1 {
+                font-size: 3.2rem;
+            }
+
+            .stats {
+                gap: 3rem;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .how-section .steps {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .how-section .steps::before {
+                display: none;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(16, 16, 26, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                padding: 2rem;
+                flex-direction: column;
+                gap: 1rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero {
+                padding: 180px 0 100px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 2.5rem;
+            }
+
+            .upload-card,
+            .results-card {
+                padding: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .how-section .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .about-grid,
+            .features-grid,
+            .advantages-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .upload-card,
+            .results-card {
+                padding: 2rem;
+            }
+
+            .role-dropdown {
+                min-width: 250px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-file-alt"></i>
+                <span>ResumeAudit<span class="logo-highlight">AI</span></span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#upload" class="nav-link">Analyze</a>
+                <a href="#how" class="nav-link">How It Works</a>
+                <a href="#about" class="nav-link">About Us</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#advantages" class="nav-link">Advantages</a>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Your resume isn't weak. It's <span class="highlight">invisible to ATS</span>.</h1>
+            <p class="subtitle">
+                AI-powered resume feedback + skill gap finder. Get role-specific insights in seconds.
+            </p>
+            <div class="stats">
+                <div class="stat">
+                    <h3>75%</h3>
+                    <p>Resumes rejected by ATS</p>
+                </div>
+                <div class="stat">
+                    <h3>6-8</h3>
+                    <p>Seconds ATS scans your resume</p>
+                </div>
+                <div class="stat">
+                    <h3>30%</h3>
+                    <p>Better interview rate after optimization</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload & Analysis Section -->
+    <section class="upload-section" id="upload">
+        <div class="container">
+            <div class="upload-card">
+                <div class="upload-header">
+                    <i class="fas fa-magic"></i>
+                    <h2>Scan Your Resume Instantly</h2>
+                    <p>Get ATS score and actionable feedback</p>
+                </div>
+
+                <div class="role-selector">
+                    <i class="fas fa-bullseye"></i>
+                    <select id="roleSelect" class="role-dropdown">
+                        <option value="frontend">Frontend Developer</option>
+                        <option value="backend">Backend Developer</option>
+                        <option value="fullstack">Full Stack Developer</option>
+                        <option value="data">Data Scientist</option>
+                        <option value="devops">DevOps Engineer</option>
+                        <option value="product">Product Manager</option>
+                        <option value="ux">UX Designer</option>
+                    </select>
+                </div>
+
+                <div class="upload-area">
+                    <div class="drop-zone" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop your resume here</p>
+                        <p class="file-types">PDF, DOCX, or TXT (max 5MB)</p>
+                        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt">
+                        <label for="fileInput" class="browse-btn">
+                            Browse Files
+                        </label>
+                        <div id="filePreview" class="file-preview"></div>
+                    </div>
+
+                    <div class="demo-option">
+                        <p>No resume handy? <button id="demoBtn">Try Demo Resume</button></p>
+                    </div>
+
+                    <button id="analyzeBtn" class="analyze-btn" disabled>
+                        <i class="fas fa-chart-line"></i>
+                        Analyze My Resume
+                    </button>
+
+                    <div id="loading" class="loading">
+                        <div class="spinner"></div>
+                        <p>Analyzing your resume...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="results-section">
+        <div class="container">
+            <div class="results-card">
+                <div class="results-header">
+                    <h2>Analysis Results for <span id="resultRole">Frontend Developer</span></h2>
+                    <p class="timestamp" id="timestamp"></p>
+                </div>
+
+                <div class="score-display">
+                    <div class="score-circle">
+                        <svg viewBox="0 0 120 120">
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#6c63ff" />
+                                    <stop offset="50%" stop-color="#00d4aa" />
+                                    <stop offset="100%" stop-color="#ff6584" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="60" cy="60" r="54" class="bg-circle"></circle>
+                            <circle cx="60" cy="60" r="54" class="progress-circle"></circle>
+                        </svg>
+                        <div class="score-circle-inner">
+                            <div class="score-value" id="scoreValue">0</div>
+                            <div class="score-label">ATS Score</div>
+                        </div>
+                    </div>
+                    <div class="score-breakdown">
+                        <div class="score-item">
+                            <div class="score-title">
+                                <span>Current Score</span>
+                                <span id="currentScore">0</span>
+                            </div>
+                            <div class="score-bar">
+                                <div id="scoreFill" class="score-fill"></div>
+                            </div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-title">
+                                <span>Target Score</span>
+                                <span>85</span>
+                            </div>
+                            <div class="score-bar">
+                                <div class="score-fill target"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-box missing-skills">
+                        <h3><i class="fas fa-times-circle"></i> Missing Skills</h3>
+                        <ul id="missingSkills"></ul>
+                    </div>
+
+                    <div class="result-box strengths">
+                        <h3><i class="fas fa-check-circle"></i> Your Strengths</h3>
+                        <ul id="strengths"></ul>
+                    </div>
+
+                    <div class="result-box feedback">
+                        <h3><i class="fas fa-chart-line"></i> Actionable Feedback</h3>
+                        <ol id="feedbackList"></ol>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="downloadBtn">
+                        <i class="fas fa-download"></i>
+                        Download Full Report
+                    </button>
+                    <button class="btn-primary" id="optimizeBtn">
+                        <i class="fas fa-robot"></i>
+                        Generate Optimized Version
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section" id="how">
+        <div class="container">
+            <h2 class="section-title">How It <span class="highlight">Works</span></h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Upload Resume</h3>
+                    <p>Drag & drop your resume (PDF, DOCX, or TXT)</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>AI Analysis</h3>
+                    <p>Our NLP extracts skills, structure, and keywords</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Your Score</h3>
+                    <p>Receive ATS score and missing skills analysis</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Implement & Improve</h3>
+                    <p>Follow specific suggestions to optimize your resume</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Updated: Changed Problem Section to About Us Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <h2 class="section-title">About <span class="highlight">ResumeAudit AI</span></h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Our Mission</h3>
+                    <p>We're on a mission to democratize career success by making ATS optimization accessible to every
+                        job seeker. No more guessing games—just data-driven insights.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered Technology</h3>
+                    <p>Using cutting-edge natural language processing and machine learning, we analyze resumes against
+                        real ATS algorithms used by Fortune 500 companies.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>For Everyone</h3>
+                    <p>Whether you're a recent graduate, career changer, or seasoned professional, our platform provides
+                        the tools you need to get noticed and land interviews.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <h2 class="section-title">Key <span class="highlight">Features</span></h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-chart-bar"></i> ATS Resume Score (0-100)</h3>
+                    <p>See how visible your resume is to Applicant Tracking Systems with a precise score.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-search"></i> Skill Gap Detection</h3>
+                    <p>Highlighted missing keywords for your target role with priority levels.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-user-tag"></i> Role-Based Feedback</h3>
+                    <p>Tailored analysis for Frontend, Data Science, Marketing, and 20+ other roles.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-lightbulb"></i> Exact Improvement Suggestions</h3>
+                    <p>"Add 'React Hooks' under Skills," "Move 'Python' higher in your experience."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Updated: Changed Future Scope to Advantages Section -->
+    <section class="advantages-section" id="advantages">
+        <div class="container">
+            <h2 class="section-title">Key <span class="highlight">Advantages</span></h2>
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <h3><i class="fas fa-bolt"></i> Instant Results</h3>
+                    <p>Get detailed feedback in seconds, not days. No waiting for human resume reviewers.</p>
+                </div>
+                <div class="advantage-card">
+                    <h3><i class="fas fa-shield-alt"></i> Privacy First</h3>
+                    <p>Your data is processed securely and never stored permanently. We respect your privacy.</p>
+                </div>
+                <div class="advantage-card">
+                    <h3><i class="fas fa-chart-line"></i> Proven Results</h3>
+                    <p>Users see 30% more interview callbacks after optimizing with our platform.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-file-alt"></i>
+                    <span>ResumeAudit<span class="logo-highlight">AI</span></span>
+                </div>
+                <p>Built for Hackathon • 2024 • ATS Resume Analyzer</p>
+                <p class="disclaimer">Disclaimer: This is a demo project. We don't store your resume data permanently.
+                    All analysis happens in real-time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== DATA =====
+        const roleSkills = {
+            "frontend": {
+                name: "Frontend Developer",
+                required: ["JavaScript", "React", "HTML5", "CSS3", "Git", "Responsive Design", "TypeScript", "Webpack"],
+                common: ["Redux", "SASS", "Bootstrap", "Jest", "Next.js", "Vue.js", "Angular"]
+            },
+            "backend": {
+                name: "Backend Developer",
+                required: ["Node.js", "Python", "Java", "REST APIs", "SQL", "Git", "Docker", "AWS"],
+                common: ["Express.js", "PostgreSQL", "MongoDB", "Redis", "Kubernetes", "GraphQL", "Spring Boot"]
+            },
+            "fullstack": {
+                name: "Full Stack Developer",
+                required: ["JavaScript", "React", "Node.js", "HTML5", "CSS3", "SQL", "Git", "REST APIs"],
+                common: ["TypeScript", "MongoDB", "Express.js", "Redux", "AWS", "Docker", "Next.js"]
+            },
+            "data": {
+                name: "Data Scientist",
+                required: ["Python", "Machine Learning", "SQL", "Pandas", "NumPy", "Statistics", "Data Visualization"],
+                common: ["TensorFlow", "PyTorch", "Scikit-learn", "Jupyter", "R", "Tableau", "Spark"]
+            },
+            "devops": {
+                name: "DevOps Engineer",
+                required: ["Docker", "Kubernetes", "AWS", "Git", "CI/CD", "Linux", "Terraform", "Jenkins"],
+                common: ["Ansible", "Prometheus", "Grafana", "Azure", "Google Cloud", "Shell Scripting", "Helm"]
+            },
+            "product": {
+                name: "Product Manager",
+                required: ["Product Strategy", "User Research", "Agile", "Roadmapping", "Data Analysis", "Stakeholder Management"],
+                common: ["SQL", "JIRA", "Confluence", "Figma", "A/B Testing", "Market Analysis", "Prototyping"]
+            },
+            "ux": {
+                name: "UX Designer",
+                required: ["User Research", "Wireframing", "Prototyping", "Figma", "UI Design", "Usability Testing"],
+                common: ["Adobe XD", "Sketch", "InVision", "User Personas", "Information Architecture", "Design Systems"]
+            }
+        };
+
+        const analysisTemplates = {
+            "frontend": {
+                score: 67,
+                missing: ["TypeScript", "Webpack", "Redux", "Jest", "Next.js"],
+                strengths: ["JavaScript", "React", "HTML5", "CSS3", "Git"],
+                feedback: [
+                    "Add 'TypeScript' to your skills section",
+                    "Include 'Webpack' under tools/technologies",
+                    "Mention 'Redux' for state management experience",
+                    "Add testing experience with 'Jest'",
+                    "Consider learning 'Next.js' for modern React development"
+                ]
+            },
+            "backend": {
+                score: 72,
+                missing: ["Docker", "AWS", "MongoDB", "Redis", "Kubernetes"],
+                strengths: ["Node.js", "Python", "SQL", "Git", "REST APIs"],
+                feedback: [
+                    "Add 'Docker' to your DevOps skills",
+                    "Include cloud experience with 'AWS'",
+                    "Add 'MongoDB' for NoSQL database experience",
+                    "Mention 'Redis' for caching solutions",
+                    "Consider learning 'Kubernetes' for container orchestration"
+                ]
+            },
+            "fullstack": {
+                score: 75,
+                missing: ["TypeScript", "MongoDB", "AWS", "Docker", "GraphQL"],
+                strengths: ["JavaScript", "React", "Node.js", "SQL", "Git"],
+                feedback: [
+                    "Add 'TypeScript' to improve code quality",
+                    "Include 'MongoDB' for NoSQL experience",
+                    "Add cloud platform experience with 'AWS'",
+                    "Include 'Docker' in your DevOps skills",
+                    "Consider learning 'GraphQL' for modern APIs"
+                ]
+            },
+            "data": {
+                score: 65,
+                missing: ["Machine Learning", "TensorFlow", "PyTorch", "Scikit-learn", "Spark"],
+                strengths: ["Python", "SQL", "Pandas", "NumPy", "Data Visualization"],
+                feedback: [
+                    "Add 'Machine Learning' as a core skill",
+                    "Include 'TensorFlow' or 'PyTorch' for deep learning",
+                    "Add 'Scikit-learn' for traditional ML algorithms",
+                    "Mention 'Spark' for big data processing",
+                    "Consider adding statistical analysis examples"
+                ]
+            },
+            "devops": {
+                score: 70,
+                missing: ["Kubernetes", "Terraform", "Prometheus", "Ansible", "Helm"],
+                strengths: ["Docker", "AWS", "Git", "CI/CD", "Linux"],
+                feedback: [
+                    "Add 'Kubernetes' for container orchestration",
+                    "Include 'Terraform' for infrastructure as code",
+                    "Add monitoring experience with 'Prometheus'",
+                    "Mention 'Ansible' for configuration management",
+                    "Include 'Helm' for Kubernetes package management"
+                ]
+            },
+            "product": {
+                score: 68,
+                missing: ["Data Analysis", "A/B Testing", "Market Analysis", "SQL", "JIRA"],
+                strengths: ["Product Strategy", "User Research", "Agile", "Roadmapping"],
+                feedback: [
+                    "Add quantitative skills like 'Data Analysis'",
+                    "Include experience with 'A/B Testing'",
+                    "Add 'Market Analysis' to your skill set",
+                    "Learn basic 'SQL' for data-driven decisions",
+                    "Include 'JIRA' under tools you're proficient with"
+                ]
+            },
+            "ux": {
+                score: 72,
+                missing: ["User Research", "Prototyping", "Figma", "Usability Testing", "Design Systems"],
+                strengths: ["Wireframing", "UI Design", "Adobe XD", "Sketch"],
+                feedback: [
+                    "Emphasize 'User Research' methodologies",
+                    "Include 'Prototyping' as a core skill",
+                    "Add 'Figma' to your design tools",
+                    "Mention experience with 'Usability Testing'",
+                    "Include 'Design Systems' in your portfolio"
+                ]
+            }
+        };
+
+        // DOM ELEMENTS
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const filePreview = document.getElementById('filePreview');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const demoBtn = document.getElementById('demoBtn');
+        const roleSelect = document.getElementById('roleSelect');
+        const resultsSection = document.getElementById('results');
+        const loading = document.getElementById('loading');
+        const scoreValue = document.getElementById('scoreValue');
+        const currentScore = document.getElementById('currentScore');
+        const scoreFill = document.getElementById('scoreFill');
+        const resultRole = document.getElementById('resultRole');
+        const timestamp = document.getElementById('timestamp');
+        const missingSkills = document.getElementById('missingSkills');
+        const strengths = document.getElementById('strengths');
+        const feedbackList = document.getElementById('feedbackList');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const optimizeBtn = document.getElementById('optimizeBtn');
+
+        // STATE
+        let selectedFile = null;
+        let currentRole = 'frontend';
+
+        //INITIALIZE
+        document.addEventListener('DOMContentLoaded', function () {
+            //Create floating particles
+            createParticles();
+            //Initialize event listeners
+            setupEventListeners();
+
+            //Initialize animations
+            initAnimations();
+        });
+
+        //FUNCTIONS
+        function setupEventListeners() {
+            // File upload events
+            dropZone.addEventListener('dragover', handleDragOver);
+            dropZone.addEventListener('dragleave', handleDragLeave);
+            dropZone.addEventListener('drop', handleDrop);
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // Button events
+            analyzeBtn.addEventListener('click', handleAnalyze);
+            demoBtn.addEventListener('click', handleDemo);
+            roleSelect.addEventListener('change', handleRoleChange);
+            downloadBtn.addEventListener('click', handleDownload);
+            optimizeBtn.addEventListener('click', handleOptimize);
+
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId !== '#') {
+                        const targetSection = document.querySelector(targetId);
+                        if (targetSection) {
+                            targetSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                });
+            });
+
+            // Mobile menu
+            document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
+                const navLinks = document.querySelector('.nav-links');
+                navLinks.classList.toggle('active');
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function (e) {
+                const navLinks = document.querySelector('.nav-links');
+                const mobileBtn = document.querySelector('.mobile-menu-btn');
+                if (window.innerWidth <= 768 && !navLinks.contains(e.target) && !mobileBtn.contains(e.target)) {
+                    navLinks.classList.remove('active');
+                }
+            });
+        }
+
+        function initAnimations() {
+            // Animate sections on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('section').forEach(section => {
+                observer.observe(section);
+            });
+        }
+
+        function createParticles() {
+            const particlesContainer = document.createElement('div');
+            particlesContainer.className = 'floating-particles';
+
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+
+                // Random properties
+                const size = Math.random() * 3 + 1;
+                const posX = Math.random() * 100;
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 20;
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+
+                // Random color
+                const colors = ['#6c63ff', '#00d4aa', '#ff6584', '#ffb347'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+                particlesContainer.appendChild(particle);
+            }
+
+            document.body.appendChild(particlesContainer);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('active');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('active');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('active');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        }
+
+        function handleFile(file) {
+            selectedFile = file;
+
+            // Validate file type
+            const validTypes = ['application/pdf', 'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'text/plain'];
+
+            if (!validTypes.includes(file.type) && !file.name.match(/\.(pdf|doc|docx|txt)$/i)) {
+                alert('Please upload a PDF, DOC, DOCX, or TXT file.');
+                selectedFile = null;
+                updateAnalyzeButton();
+                return;
+            }
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size exceeds 5MB limit.');
+                selectedFile = null;
+                updateAnalyzeButton();
+                return;
+            }
+
+            // Show file preview
+            filePreview.innerHTML = `
+                <p><i class="fas fa-file"></i> ${file.name} (${formatFileSize(file.size)})</p>
+            `;
+            filePreview.classList.add('show');
+
+            updateAnalyzeButton();
+        }
+
+        function handleRoleChange(e) {
+            currentRole = e.target.value;
+        }
+
+        function updateAnalyzeButton() {
+            analyzeBtn.disabled = !selectedFile;
+        }
+
+        // Real API call to Flask backend
+        // Test connection function
+        async function testServerConnection() {
+            try {
+                console.log("Testing server connection...");
+                const response = await fetch("http://127.0.0.1:5000/health");
+                const data = await response.json();
+                console.log("Server response:", data);
+                return true;
+            } catch (error) {
+                console.error("Server connection failed:", error);
+                return false;
+            }
+        }
+
+        // Modify your handleAnalyze function:
+        async function handleAnalyze() {
+            if (!selectedFile) return;
+
+            // Test connection first
+            const isConnected = await testServerConnection();
+
+            if (!isConnected) {
+                const useDemo = confirm("Cannot connect to server. Please make sure:\n1. Python server is running\n2. Port 5000 is available\n\nRun: python resumeCheckAI_fixed.py\n\nUse demo mode instead?");
+
+                if (useDemo) {
+                    showDemoResults(currentRole);
+                    resultsSection.style.display = 'block';
+                    resultsSection.scrollIntoView({ behavior: 'smooth' });
+                }
+                return;
+            }
+
+            loading.style.display = 'block';
+            analyzeBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append("resume", selectedFile);
+            formData.append("role", roleSelect.value);
+
+            try {
+                console.log("Sending analysis request...");
+                const response = await fetch("http://127.0.0.1:5000/analyze", {
+                    method: "POST",
+                    body: formData
+                });
+
+                console.log("Response status:", response.status);
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Analysis Results:", data);
+
+                loading.style.display = 'none';
+                analyzeBtn.disabled = false;
+
+                showResultsFromAPI(data);
+                resultsSection.style.display = 'block';
+                resultsSection.scrollIntoView({ behavior: "smooth" });
+
+            } catch (error) {
+                console.error("Analysis error:", error);
+                loading.style.display = 'none';
+                analyzeBtn.disabled = false;
+
+                alert(`Analysis failed: ${error.message}\n\nUsing demo results instead.`);
+                showDemoResults(currentRole);
+                resultsSection.style.display = 'block';
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // NEW: Function to display real AI results from API
+        function showResultsFromAPI(data) {
+            // Update role name
+            resultRole.textContent = roleSkills[currentRole].name;
+
+            // Update timestamp
+            const now = new Date();
+            timestamp.textContent = `Analyzed at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} on ${now.toLocaleDateString()}`;
+
+            // ATS Score
+            animateScore(data.ats_score);
+
+            // Missing skills
+            missingSkills.innerHTML = "";
+            data.missing_skills.forEach(skill => {
+                const li = document.createElement("li");
+                li.textContent = skill;
+                missingSkills.appendChild(li);
+            });
+
+            // Strengths (matched skills)
+            strengths.innerHTML = "";
+            data.matched_skills.forEach(skill => {
+                const li = document.createElement("li");
+                li.textContent = skill;
+                strengths.appendChild(li);
+            });
+
+            // Feedback - convert string to array of bullet points
+            feedbackList.innerHTML = "";
+            // Split AI feedback into separate points based on common patterns
+            const feedbackPoints = data.ai_feedback.split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0 && !line.startsWith('You are'));
+
+            feedbackPoints.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item.replace(/^\d+\.\s*|^[-*•]\s*/, ''); // Remove numbering/bullets
+                feedbackList.appendChild(li);
+            });
+
+            // If no feedback points were extracted, show the raw text
+            if (feedbackList.children.length === 0) {
+                const li = document.createElement("li");
+                li.textContent = data.ai_feedback.substring(0, 100) + "...";
+                feedbackList.appendChild(li);
+            }
+        }
+
+        // Keep demo function as fallback
+        function handleDemo() {
+            // Use demo data
+            selectedFile = { name: 'demo_resume.pdf', size: 1024 * 1024 };
+
+            // Show file preview
+            filePreview.innerHTML = `
+                <p><i class="fas fa-file"></i> demo_resume.pdf (Demo Mode)</p>
+            `;
+            filePreview.classList.add('show');
+
+            updateAnalyzeButton();
+
+            // Auto-analyze with demo data
+            setTimeout(() => {
+                showDemoResults(currentRole);
+                resultsSection.style.display = 'block';
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+        }
+
+        // Demo results function (kept for fallback)
+        function showDemoResults(role) {
+            const analysis = analysisTemplates[role];
+            const roleName = roleSkills[role].name;
+
+            // Update timestamp
+            const now = new Date();
+            timestamp.textContent = `Analyzed at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} on ${now.toLocaleDateString()} (Demo Mode)`;
+
+            // Update role name
+            resultRole.textContent = roleName;
+
+            // Animate score
+            animateScore(analysis.score);
+
+            // Update missing skills
+            missingSkills.innerHTML = '';
+            analysis.missing.forEach(skill => {
+                const li = document.createElement('li');
+                li.textContent = skill;
+                missingSkills.appendChild(li);
+            });
+
+            // Update strengths
+            strengths.innerHTML = '';
+            analysis.strengths.forEach(skill => {
+                const li = document.createElement('li');
+                li.textContent = skill;
+                strengths.appendChild(li);
+            });
+
+            // Update feedback
+            feedbackList.innerHTML = '';
+            analysis.feedback.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                feedbackList.appendChild(li);
+            });
+        }
+
+        function animateScore(targetScore) {
+            // Remove existing SVG if any
+            const oldSvg = document.querySelector('.score-circle svg');
+            if (oldSvg) oldSvg.remove();
+
+            // Create new SVG
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("viewBox", "0 0 120 120");
+
+            // Create gradient
+            const defs = document.createElementNS(svgNS, "defs");
+            const gradient = document.createElementNS(svgNS, "linearGradient");
+            gradient.setAttribute("id", "gradient");
+            gradient.setAttribute("x1", "0%");
+            gradient.setAttribute("y1", "0%");
+            gradient.setAttribute("x2", "100%");
+            gradient.setAttribute("y2", "100%");
+
+            const stop1 = document.createElementNS(svgNS, "stop");
+            stop1.setAttribute("offset", "0%");
+            stop1.setAttribute("stop-color", "#6c63ff");
+            const stop2 = document.createElementNS(svgNS, "stop");
+            stop2.setAttribute("offset", "50%");
+            stop2.setAttribute("stop-color", "#00d4aa");
+            const stop3 = document.createElementNS(svgNS, "stop");
+            stop3.setAttribute("offset", "100%");
+            stop3.setAttribute("stop-color", "#ff6584");
+
+            gradient.appendChild(stop1);
+            gradient.appendChild(stop2);
+            gradient.appendChild(stop3);
+            defs.appendChild(gradient);
+            svg.appendChild(defs);
+
+            // Create circles
+            const bgCircle = document.createElementNS(svgNS, "circle");
+            bgCircle.setAttribute("cx", "60");
+            bgCircle.setAttribute("cy", "60");
+            bgCircle.setAttribute("r", "54");
+            bgCircle.classList.add("bg-circle");
+
+            const progressCircle = document.createElementNS(svgNS, "circle");
+            progressCircle.setAttribute("cx", "60");
+            progressCircle.setAttribute("cy", "60");
+            progressCircle.setAttribute("r", "54");
+            progressCircle.classList.add("progress-circle");
+
+            svg.appendChild(bgCircle);
+            svg.appendChild(progressCircle);
+
+            // Add to DOM
+            document.querySelector('.score-circle').prepend(svg);
+
+            // Calculate animation values
+            const radius = 54;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (targetScore / 100) * circumference;
+
+            // Set initial state
+            progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+            progressCircle.style.strokeDashoffset = circumference;
+
+            // Animate SVG
+            setTimeout(() => {
+                progressCircle.style.strokeDashoffset = offset;
+            }, 100);
+
+            // Animate score numbers
+            let current = 0;
+            const increment = targetScore / 60;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= targetScore) {
+                    current = targetScore;
+                    clearInterval(timer);
+                }
+
+                // Update score display
+                const displayScore = Math.round(current);
+                scoreValue.textContent = displayScore;
+                currentScore.textContent = displayScore;
+                currentScore.previousElementSibling.textContent = "Current Score";
+
+                // Update score bar width
+                scoreFill.style.width = `${current}%`;
+
+                // Color change based on score
+                if (current >= 80) {
+                    scoreFill.style.background = "var(--gradient-secondary)";
+                } else if (current >= 60) {
+                    scoreFill.style.background = "linear-gradient(135deg, #ffb347, #ffcc33)";
+                } else {
+                    scoreFill.style.background = "var(--gradient-accent)";
+                }
+            }, 20);
+        }
+
+        function handleDownload() {
+            const roleName = roleSkills[currentRole].name;
+            const score = document.getElementById('scoreValue').textContent;
+            const missingItems = Array.from(document.querySelectorAll('#missingSkills li')).map(li => li.textContent);
+            const feedbackItems = Array.from(document.querySelectorAll('#feedbackList li')).map(li => li.textContent);
+
+            let report = `ResumeAudit AI Analysis Report\n`;
+            report += `=============================\n\n`;
+            report += `Role: ${roleName}\n`;
+            report += `ATS Score: ${score}/100\n`;
+            report += `Analysis Date: ${new Date().toLocaleDateString()}\n\n`;
+
+            report += `MISSING SKILLS:\n`;
+            missingItems.forEach(item => {
+                report += `• ${item}\n`;
+            });
+
+            report += `\nACTIONABLE FEEDBACK:\n`;
+            feedbackItems.forEach((item, index) => {
+                report += `${index + 1}. ${item}\n`;
+            });
+
+            report += `\n---\n`;
+            report += `Generated by ResumeAudit AI\n`;
+            report += `www.resumeaudit-ai.demo`;
+
+            //download
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `resume-analysis-${roleName.toLowerCase().replace(/ /g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            //confirmation
+            alert('Report downloaded successfully!');
+        }
+
+        function handleOptimize() {
+            const roleName = roleSkills[currentRole].name;
+            const currentScore = document.getElementById('scoreValue').textContent;
+            const optimizedScore = Math.min(95, parseInt(currentScore) + 25);
+
+            let message = `🚀 Optimized Resume Preview for ${roleName}\n\n`;
+            message += `Current ATS Score: ${currentScore}/100\n`;
+            message += `Optimized ATS Score: ${optimizedScore}/100\n\n`;
+            message += `Changes Applied:\n`;
+            message += `• Added missing keywords from the analysis\n`;
+            message += `• Improved resume formatting for ATS parsing\n`;
+            message += `• Enhanced bullet points with quantifiable achievements\n`;
+            message += `• Optimized section headers for keyword matching\n\n`;
+            message += `To generate the full optimized version, connect to our API.`;
+
+            alert(message);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+
+</html>
